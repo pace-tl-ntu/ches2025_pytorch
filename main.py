@@ -51,5 +51,5 @@ elif leakage == 'ID':
     classes = 256
 
 
-dataloadertrain = Custom_Dataset(root='./', dataset=dataset, leakage=leakage,
+dataloadertrain = Custom_Dataset(root='./../', dataset=dataset, leakage=leakage,
                                              transform=transforms.Compose([ToTensor_trace()]), byte = byte)
