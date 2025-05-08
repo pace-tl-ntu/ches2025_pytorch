@@ -7,7 +7,7 @@ from src.utils import load_ctf_2025
 import torch
 
 class Custom_Dataset(Dataset):
-    def __init__(self, root = './', dataset = "Chipwhisperer", leakage = "HW",transform = None):
+    def __init__(self, root = './', dataset = "CHES_2025", leakage = "HW",transform = None):
 
         if dataset == "CHES_2025":
             byte = 2
