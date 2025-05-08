@@ -66,7 +66,7 @@ if __name__=="__main__":
     ############## Below is an example ############################################
     root = "./Result/"
     model_root ="models/"
-    config = np.load(root, allow_pickle=True).item()
+    config = np.load(model_root, allow_pickle=True).item()
     model = CNN(config, num_sample_pts, classes).to(device)
     model.load_state_dict(torch.load(model_root + "model_0.pth"))
     ###############################################################################
