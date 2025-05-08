@@ -12,9 +12,7 @@ from torchvision.transforms import transforms
 from src.dataloader import ToTensor_trace, Custom_Dataset
 from src.net import create_hyperparameter_space, MLP, CNN
 from src.trainer import trainer
-from src.utils import perform_attacks, NTGE_fn, evaluate, AES_Sbox
-
-
+from src.utils import evaluate, AES_Sbox, calculate_HW
 
 if __name__=="__main__":
     dataset = "CHES_2025"
@@ -54,20 +52,29 @@ if __name__=="__main__":
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     nb_attacks = 100
-    if leakage == 'HW':
-        def leakage_fn(att_plt, k):
-            hw = [bin(x).count("1") for x in range(256)]
-            return hw[AES_Sbox[k ^ int(att_plt)]]
-
-        classes = 9
-    elif leakage == 'ID':
+    if leakage == 'ID':
         def leakage_fn(att_plt, k):
             return AES_Sbox[k ^ int(att_plt)]
         classes = 256
 
+    elif leakage == 'HW':
+        def leakage_fn(att_plt, k):
+            hw = [bin(x).count("1") for x in range(256)]
+            return hw[AES_Sbox[k ^ int(att_plt)]]
+        classes = 9
+    ####You can change the code above if you want to create your own leakage model.
 
-    dataloadertrain = Custom_Dataset(root='./../', dataset=dataset, leakage=leakage,
+
+
+    dataloadertrain = Custom_Dataset(root='./../', dataset=dataset, leakage="ID",
                                                  transform=transforms.Compose([ToTensor_trace()]))
+    ##########################################################################
+
+    if leakage == "HW":
+
+        dataloadertrain.Y_profiling = calculate_HW(dataloadertrain.Y_profiling)
+        dataloadertrain.Y_attack = calculate_HW(dataloadertrain.Y_attack)
+
 
     dataloadertrain.choose_phase("train")
     dataloadertest = deepcopy(dataloadertrain)
