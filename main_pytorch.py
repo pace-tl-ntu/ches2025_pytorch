@@ -107,7 +107,7 @@ if __name__=="__main__":
             model = trainer(config, num_epochs, num_sample_pts, dataloaders, dataset_sizes, model_type, classes, device)
             torch.save(model.state_dict(), model_root + "model_"+str(num_models)+".pth")
         else:
-            config = np.load(model_root, allow_pickle=True).item()
+            config = np.load(model_root + "model_configuration_"+str(num_models)+".npy", allow_pickle=True).item()
             if model_type == "mlp":
                 model = MLP(config, num_sample_pts, classes).to(device)
             elif model_type == "cnn":
