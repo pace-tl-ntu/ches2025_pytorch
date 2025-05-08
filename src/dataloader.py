@@ -20,23 +20,11 @@ class Custom_Dataset(Dataset):
         print("The dataset we using: ", data_root)
         self.transform = transform
         self.scaler_std = StandardScaler()
-        self.scaler = MinMaxScaler()
         self.X_profiling = self.scaler_std.fit_transform(self.X_profiling)
         self.X_attack = self.scaler_std.transform(self.X_attack)
 
-        # self.scaler_std_latent = StandardScaler()
-        # self.scaler_latent = MinMaxScaler()
         self.X_attack_test, self.X_attack_val, self.Y_attack_test, self.Y_attack_val = train_test_split(self.X_attack,self.Y_attack,test_size=0.1,random_state=0)
 
-        # print("X_profiling:", self.X_profiling)
-        print("X_profiling max:", np.max(self.X_profiling))
-        print("X_profiling min:", np.min(self.X_profiling))
-        # print("plt_profiling:", self.plt_profiling)
-    def apply_MinMaxScaler(self):
-        self.X_profiling = self.scaler.fit_transform(self.X_profiling)
-        self.X_attack = self.scaler.transform(self.X_attack)
-        print("After minmaxscaler X_profiling max:", np.max(self.X_profiling))
-        print("After minmaxscaler X_profiling min:", np.min(self.X_profiling))
 
 
     def choose_phase(self,phase):
