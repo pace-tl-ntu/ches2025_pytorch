@@ -28,7 +28,7 @@ if not os.path.exists('./Result/'):
     os.mkdir('./Result/')
 
 root = "./Result/"
-save_root = root+dataset+"_"+model_type+ "_byte"+str(byte)+"_"+leakage+"/"
+save_root = root+dataset+"_"+model_type+"_"+leakage+"/"
 model_root = save_root+"models/"
 print("root:", root)
 print("save_time_path:", save_root)
