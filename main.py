@@ -18,7 +18,6 @@ dataset = "CHES_2025"
 model_type = "mlp" #mlp, cnn
 leakage = "HW" #ID, HW
 train_models = True
-byte = 0
 num_epochs = 50
 total_num_models = 2
 nb_traces_attacks = 1700
