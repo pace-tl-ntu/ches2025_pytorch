@@ -13,6 +13,7 @@ from src.utils import evaluate, AES_Sbox, calculate_HW
 if __name__=="__main__":
     dataset = "CHES_2025"
     leakage = "HW"
+    model_type = "mlp"
     nb_traces_attacks = 1700
     total_nb_traces_attacks = 2000
 
@@ -65,7 +66,8 @@ if __name__=="__main__":
     ##TODO: Load your model (note, you have to create your model in this file and new function should be in this file.) ########################
     ############## Below is an example ############################################
     root = "./Result/"
-    model_root ="models/"
+    save_root = root + dataset + "_" + model_type + "_" + leakage + "/"
+    model_root = save_root + "models/"
     config = np.load(model_root + "model_configuration_0.npy", allow_pickle=True).item()
     model = CNN(config, num_sample_pts, classes).to(device)
     model.load_state_dict(torch.load(model_root + "model_0.pth"))
