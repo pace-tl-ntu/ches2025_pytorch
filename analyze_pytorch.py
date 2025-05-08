@@ -27,30 +27,26 @@ if __name__=="__main__":
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     nb_attacks = 100
+
+
+    ##################please do not touch this code here###################
+    dataloadertest = Custom_Dataset(root='./../', dataset=dataset, leakage="ID", #change root to where you download your dataset.
+                                                 transform=transforms.Compose([ToTensor_trace()]))
+    #########################################################################
     if leakage == 'ID':
         def leakage_fn(att_plt, k):
             return AES_Sbox[k ^ int(att_plt)]
-
-
         classes = 256
     elif leakage == 'HW':
         def leakage_fn(att_plt, k):
             hw = [bin(x).count("1") for x in range(256)]
             return hw[AES_Sbox[k ^ int(att_plt)]]
-
         classes = 9
+        dataloadertest.Y_attack = calculate_HW(dataloadertest.Y_attack)
     else:
         ####TODO: You can change the code here if you want to create your own leakage model.
         pass
 
-
-    ##################please do not touch this code here###################
-    dataloadertest = Custom_Dataset(root='./../', dataset=dataset, leakage="ID",
-                                                 transform=transforms.Compose([ToTensor_trace()]))
-    #########################################################################
-    if leakage == "HW":
-        ####TODO: You can change the code here if you want to create your own leakage model.
-        dataloadertest.Y_attack = calculate_HW(dataloadertest.Y_attack)
 
     ##################please do not touch this code here###################
     dataloadertest.choose_phase("test")
