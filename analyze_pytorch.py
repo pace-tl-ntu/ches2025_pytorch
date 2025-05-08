@@ -69,7 +69,7 @@ if __name__=="__main__":
     save_root = root + dataset + "_" + model_type + "_" + leakage + "/"
     model_root = save_root + "models/"
     config = np.load(model_root + "model_configuration_0.npy", allow_pickle=True).item()
-    model = CNN(config, num_sample_pts, classes).to(device)
+    model = MLP(config, num_sample_pts, classes).to(device)
     model.load_state_dict(torch.load(model_root + "model_0.pth"))
     ###############################################################################
 
