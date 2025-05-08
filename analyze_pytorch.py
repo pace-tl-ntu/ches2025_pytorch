@@ -29,7 +29,7 @@ if __name__=="__main__":
     nb_attacks = 100
 
 
-    ##################please do not touch this code here###################
+    ##################please do not touch this code below###################
     dataloadertest = Custom_Dataset(root='./../', dataset=dataset, leakage="ID", #change root to where you download your dataset.
                                                  transform=transforms.Compose([ToTensor_trace()]))
     #########################################################################
