@@ -5,6 +5,8 @@ import h5py
 import numpy as np
 from sklearn.metrics import accuracy_score
 from tqdm import tqdm
+import torch
+import torch.nn.functional as F
 
 AES_Sbox = np.array([
     0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
@@ -51,15 +53,7 @@ def calculate_HW(data):
     return [hw[int(s)] for s in data]
 
 
-
-
-
-
-
-
-
-
-def load_rasp(filename, leakage_model='HW', byte = 0, train_begin = 0, train_end = 100000,test_begin = 0, test_end = 50000):
+def load_ctf_2025(filename, leakage_model='HW', byte = 0, train_begin = 0, train_end = 100000,test_begin = 0, test_end = 50000):
 
     in_file = h5py.File(filename, "r")
     X_profiling = np.array(in_file['Profiling_traces/traces'])
@@ -135,13 +129,13 @@ def rk_key(rank_array, key):
         return np.float32(final_rank)
 
 # Compute the evolution of rank
-def rank_compute(prediction, att_plt, correct_key,leakage, dataset):
+def rank_compute(prediction, att_plt, correct_key,leakage_fn):
     '''
     :param prediction: prediction by the neural network
     :param att_plt: attack plaintext
     :return: key_log_prob which is the log probability
     '''
-    hw = [bin(x).count("1") for x in range(256)]
+    # hw = [bin(x).count("1") for x in range(256)]
     (nb_traces, nb_hyp) = prediction.shape
 
     key_log_prob = np.zeros(256)
@@ -149,29 +143,18 @@ def rank_compute(prediction, att_plt, correct_key,leakage, dataset):
     rank_evol = np.full(nb_traces, 255)
     for i in range(nb_traces):
         for k in range(256):
-            if dataset == "AES_HD_ext":
-                if leakage == 'ID':
-                    key_log_prob[k] += prediction[i, AES_Sbox_inv[k ^ int(att_plt[i, 15])] ^ att_plt[i, 11] ]
-                else:
-
-                    key_log_prob[k] += prediction[i, hw[AES_Sbox_inv[k ^ int(att_plt[i, 15])] ^ att_plt[i, 11]] ]
-            elif dataset == "AES_HD_ext_ID":
-                if leakage == 'ID':
-                    key_log_prob[k] += prediction[i, AES_Sbox_inv[k ^ int(att_plt[i, 15])]]
-                else:
-                    key_log_prob[k] += prediction[i, hw[AES_Sbox_inv[k ^ int(att_plt[i, 15])]]]
-            else:
-                if leakage == 'ID':
-                    key_log_prob[k] += prediction[i,  AES_Sbox[k ^ int(att_plt[i])]]
-                else:
-                    key_log_prob[k] += prediction[i,  hw[ AES_Sbox[k ^ int(att_plt[i])]]]
-
+            y_value = leakage_fn(att_plt[i], k)
+            key_log_prob[k] += prediction[i,  y_value]
+            # if leakage == 'ID':
+            #     key_log_prob[k] += prediction[i,  AES_Sbox[k ^ int(att_plt[i])]]
+            # else:
+            #     key_log_prob[k] += prediction[i,  hw[AES_Sbox[k ^ int(att_plt[i])]]]
         rank_evol[i] =  rk_key(key_log_prob, correct_key) #this will sort it.
 
     return rank_evol, key_log_prob
 
 
-def perform_attacks( nb_traces, predictions, plt_attack,correct_key,leakage,dataset,nb_attacks=1, shuffle=True):
+def perform_attacks( nb_traces, predictions, plt_attack,correct_key,leakage_fn,nb_attacks=1, shuffle=True):
     '''
     :param nb_traces: number_traces used to attack
     :param predictions: output of the neural network i.e. prob of each class
@@ -196,7 +179,7 @@ def perform_attacks( nb_traces, predictions, plt_attack,correct_key,leakage,data
         else:
             att_pred = predictions[:nb_traces]
             att_plt = plt_attack[:nb_traces]
-        rank_evol, key_log_prob = rank_compute(att_pred, att_plt,correct_key,leakage=leakage,dataset=dataset)
+        rank_evol, key_log_prob = rank_compute(att_pred, att_plt,correct_key,leakage_fn=leakage_fn)
         all_rk_evol[i] = rank_evol
         all_key_log_prob += key_log_prob
 
@@ -245,3 +228,16 @@ def NTGE_fn(GE):
         elif GE[i] == 0:
             NTGE = i
     return NTGE
+
+
+def evaluate(device, model, X_attack, plt_attack,correct_key,leakage_fn, nb_attacks=100, total_nb_traces_attacks=2000, nb_traces_attacks = 1700):
+    attack_traces = torch.from_numpy(X_attack[:total_nb_traces_attacks]).to(device).unsqueeze(1).float()
+    predictions_wo_softmax = model(attack_traces)
+    predictions = F.softmax(predictions_wo_softmax, dim=1)
+    predictions = predictions.cpu().detach().numpy()
+    GE, key_prob = perform_attacks(nb_traces_attacks, predictions, plt_attack, correct_key,
+                                   nb_attacks=nb_attacks, shuffle=True, leakage_fn=leakage_fn)
+    NTGE = NTGE_fn(GE)
+    print("GE", GE)
+    print("NTGE", NTGE)
+    return GE,NTGE
