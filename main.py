@@ -65,7 +65,7 @@ elif leakage == 'ID':
 
 
 dataloadertrain = Custom_Dataset(root='./../', dataset=dataset, leakage=leakage,
-                                             transform=transforms.Compose([ToTensor_trace()]), byte = byte)
+                                             transform=transforms.Compose([ToTensor_trace()]))
 
 dataloadertrain.choose_phase("train")
 dataloadertest = deepcopy(dataloadertrain)
