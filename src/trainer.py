@@ -48,7 +48,7 @@ def trainer(config,num_epochs,num_sample_pts, dataloaders,dataset_sizes,model_ty
                 # track history if only in train
                 with torch.set_grad_enabled(phase == 'train'):
                     outputs = model(inputs)
-                    # print("outputs.shape: ", outputs.shape)
+                    print("outputs.shape: ", outputs.shape)
 
                     _, preds = torch.max(outputs, dim=1)
 
