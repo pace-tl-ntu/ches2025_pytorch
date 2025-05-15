@@ -68,15 +68,16 @@ if __name__=="__main__":
 
     dataloadertrain = Custom_Dataset(root='./../', dataset=dataset, leakage="ID",
                                                  transform=transforms.Compose([ToTensor_trace()]))
+
     ##########################################################################
 
     if leakage == "HW":
-
         dataloadertrain.Y_profiling = np.array(calculate_HW(dataloadertrain.Y_profiling))
         dataloadertrain.Y_attack = np.array(calculate_HW(dataloadertrain.Y_attack))
         print("Y_profiling:", dataloadertrain.Y_profiling)
         print("Y_attack:", dataloadertrain.Y_attack)
 
+    dataloadertrain.split_attack_set_validation_test()
     dataloadertrain.choose_phase("train")
     dataloadertest = deepcopy(dataloadertrain)
     dataloadertest.choose_phase("test")

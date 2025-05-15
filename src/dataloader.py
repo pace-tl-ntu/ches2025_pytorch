@@ -22,7 +22,7 @@ class Custom_Dataset(Dataset):
         self.scaler_std = StandardScaler()
         self.X_profiling = self.scaler_std.fit_transform(self.X_profiling)
         self.X_attack = self.scaler_std.transform(self.X_attack)
-
+    def split_attack_set_validation_test(self):
         self.X_attack_test, self.X_attack_val, self.Y_attack_test, self.Y_attack_val = train_test_split(self.X_attack,self.Y_attack,test_size=0.1,random_state=0)
 
 
