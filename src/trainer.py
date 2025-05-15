@@ -41,7 +41,7 @@ def trainer(config,num_epochs,num_sample_pts, dataloaders,dataset_sizes,model_ty
             for (traces, labels) in tk0:
                 inputs = traces.to(device)
                 labels = labels.to(device)
-                print(labels)
+                # print(labels)
                 # zero the parameter gradients
                 optimizer.zero_grad()
 
@@ -49,7 +49,7 @@ def trainer(config,num_epochs,num_sample_pts, dataloaders,dataset_sizes,model_ty
                 # track history if only in train
                 with torch.set_grad_enabled(phase == 'train'):
                     outputs = model(inputs)
-                    print("outputs.shape: ", outputs.shape)
+                    # print("outputs.shape: ", outputs.shape)
 
                     _, preds = torch.max(outputs, dim=1)
 
