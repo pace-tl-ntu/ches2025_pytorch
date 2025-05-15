@@ -114,5 +114,5 @@ if __name__=="__main__":
                 model = CNN(config, num_sample_pts, classes).to(device)
             model.load_state_dict(torch.load(model_root + "model_"+str(num_models)+".pth"))
         #Evaluate
-        GE, NTGE = evaluate(device, model, X_attack, plt_attack, correct_key,leakage_fn=leakage_fn, nb_attacks=100, total_nb_traces_attacks=2000, nb_traces_attacks=1700)
+        # GE, NTGE = evaluate(device, model, X_attack, plt_attack, correct_key,leakage_fn=leakage_fn, nb_attacks=100, total_nb_traces_attacks=2000, nb_traces_attacks=1700)
         np.save(model_root + "/result_"+str(num_models), {"GE": GE, "NTGE": NTGE})
