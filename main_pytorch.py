@@ -17,7 +17,7 @@ from src.utils import evaluate, AES_Sbox, calculate_HW
 if __name__=="__main__":
     dataset = "CHES_2025"
     model_type = "mlp" #mlp, cnn
-    leakage = "HW" #ID, HW
+    leakage = "ID" #ID, HW
     train_models = True
     num_epochs = 50
     total_num_models = 2
@@ -93,7 +93,7 @@ if __name__=="__main__":
             config = create_hyperparameter_space(model_type)
             np.save(model_root + "model_configuration_"+str(num_models)+".npy", config)
             batch_size = config["batch_size"]
-            num_workers = 2
+            num_workers = 0
             dataloaders = {"train": torch.utils.data.DataLoader(dataloadertrain, batch_size=batch_size,
                                                                 shuffle=True,
                                                                 num_workers=num_workers),
