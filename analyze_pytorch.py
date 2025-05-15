@@ -49,6 +49,7 @@ if __name__=="__main__":
 
 
     ##################please do not touch this code here###################
+    dataloadertest.split_attack_set_validation_test()
     dataloadertest.choose_phase("test")
     correct_key = dataloadertest.correct_key
     X_attack = dataloadertest.X_attack
