@@ -72,9 +72,10 @@ if __name__=="__main__":
 
     if leakage == "HW":
 
-        dataloadertrain.Y_profiling = calculate_HW(dataloadertrain.Y_profiling)
-        dataloadertrain.Y_attack = calculate_HW(dataloadertrain.Y_attack)
-
+        dataloadertrain.Y_profiling = np.array(calculate_HW(dataloadertrain.Y_profiling))
+        dataloadertrain.Y_attack = np.array(calculate_HW(dataloadertrain.Y_attack))
+        print("Y_profiling:", dataloadertrain.Y_profiling)
+        print("Y_attack:", dataloadertrain.Y_attack)
 
     dataloadertrain.choose_phase("train")
     dataloadertest = deepcopy(dataloadertrain)
