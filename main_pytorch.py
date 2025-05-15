@@ -94,7 +94,7 @@ if __name__=="__main__":
             config = create_hyperparameter_space(model_type)
             np.save(model_root + "model_configuration_"+str(num_models)+".npy", config)
             batch_size = config["batch_size"]
-            num_workers = 2
+            num_workers = 0
             dataloaders = {"train": torch.utils.data.DataLoader(dataloadertrain, batch_size=batch_size,
                                                                 shuffle=True,
                                                                 num_workers=num_workers),
