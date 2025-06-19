@@ -10,7 +10,7 @@ class Custom_Dataset(Dataset):
     def __init__(self, root = './', dataset = "CHES_2025", leakage = "HW",transform = None):
 
         if dataset == "CHES_2025":
-            byte = 2
+            byte = 0
             data_root = 'Dataset/CHES_2025/CHES_Challenge_v0.h5'
             (self.X_profiling, self.X_attack), (self.Y_profiling, self.Y_attack), (
                 self.plt_profiling, self.plt_attack), self.correct_key = load_ctf_2025(
