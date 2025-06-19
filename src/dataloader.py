@@ -11,7 +11,7 @@ class Custom_Dataset(Dataset):
 
         if dataset == "CHES_2025":
             byte = 0
-            data_root = 'Dataset/CHES_2025/CHES_Challenge_v0.h5'
+            data_root = 'Dataset/CHES_2025/CHES_Challenge.h5'
             (self.X_profiling, self.X_attack), (self.Y_profiling, self.Y_attack), (
                 self.plt_profiling, self.plt_attack), self.correct_key = load_ctf_2025(
                 root + data_root, leakage_model=leakage, byte=byte, train_begin=0, train_end=45000, test_begin=0,
