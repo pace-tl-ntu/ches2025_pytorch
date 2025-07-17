@@ -59,8 +59,7 @@ if __name__=="__main__":
 
     elif leakage == 'HW':
         def leakage_fn(att_plt, k):
-            hw = [bin(x).count("1") for x in range(256)]
-            return hw[AES_Sbox[k ^ int(att_plt)]]
+            return bin(int(AES_Sbox[k ^ int(att_plt)])).count("1")
         classes = 9
     ####You can change the code above if you want to create your own leakage model.
 
