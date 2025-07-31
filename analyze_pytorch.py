@@ -13,8 +13,8 @@ from src.utils import evaluate, AES_Sbox, calculate_HW
 if __name__=="__main__":
     dataset = "CHES_2025"
     leakage = "HW"
-    nb_traces_attacks = 1700
-    total_nb_traces_attacks = 2000
+    nb_traces_attacks = 100000
+    total_nb_traces_attacks = 100000
 
     seed = 0
     random.seed(seed)
@@ -29,7 +29,7 @@ if __name__=="__main__":
     nb_attacks = 100
 
 
-    ##################please do not touch this code below###################
+
     dataloadertest = Custom_Dataset(root='./../', dataset=dataset, leakage="ID", #change root to where you download your dataset.
                                                  transform=transforms.Compose([ToTensor_trace()]))
     #########################################################################
@@ -38,17 +38,18 @@ if __name__=="__main__":
             return AES_Sbox[k ^ int(att_plt)]
         classes = 256
     elif leakage == 'HW':
+
+        # hw = [bin(x).count("1") for x in range(256)]
         def leakage_fn(att_plt, k):
-            hw = [bin(x).count("1") for x in range(256)]
-            return hw[AES_Sbox[k ^ int(att_plt)]]
+            return bin(int(AES_Sbox[k ^ int(att_plt)])).count("1")
         classes = 9
-        dataloadertest.Y_attack = calculate_HW(dataloadertest.Y_attack)
+        dataloadertest.Y_attack = dataloadertest.Y_attack
     else:
         ####TODO: You can change the code here if you want to create your own leakage model.
         pass
 
 
-    ##################please do not touch this code here###################
+
     dataloadertest.split_attack_set_validation_test()
     dataloadertest.choose_phase("test")
     correct_key = dataloadertest.correct_key
@@ -56,7 +57,6 @@ if __name__=="__main__":
     Y_attack = dataloadertest.Y_attack
     plt_attack = dataloadertest.plt_attack
     num_sample_pts = X_attack.shape[-1]
-    #########################################################################
 
 
     ##TODO: Load your model (note, you have to create your model in this file and new function should be in this file.) ########################
